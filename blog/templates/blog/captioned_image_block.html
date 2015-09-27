@@ -1,0 +1,11 @@
+{% load wagtailimages_tags %}
+
+<figure class="captioned-image">
+    {% image self.image original %}
+    <figcaption>
+        {{ self.caption}}
+        {% if self.source %}
+            (<a href="{{ self.source }}">Source</a>)
+        {% endif %}
+    </figcaption>
+</figure>

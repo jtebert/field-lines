@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% include "navbar.html" %}
+
+    <div class="container content-wrapper">
+
+        {% block page-content %}{% endblock %}
+
+    </div>
+{% endblock %}

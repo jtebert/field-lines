@@ -1,0 +1,66 @@
+{% extends "page.html" %}
+
+{% load wagtailcore_tags wagtailimages_tags subject_pages create_page_range %}
+
+{% block body_class %}template-blogindexpage{% endblock %}
+
+{% block page-content %}
+
+<div class="col-md-4">
+    <div class="info-box" id="index-intro">
+        <h2 class="info-header">{{ self.title }}</h2>
+        <div class="general-info">
+            {{ self.intro|richtext }}
+        </div>
+    </div>
+</div>
+
+<div class="col-md-8">
+    {% if articles %}
+        {% for article in articles %}
+            {% include "blog/preview_article.html" %}
+        {% endfor %}
+
+    <div class="pagination">
+        {% if articles and articles.paginator.num_pages > 1 %}
+            {% if articles.has_previous %}
+                <a href="?page=1">
+                    <i class="fa fa-angle-double-left"></i>
+                </a>
+                <a href="?page={{ articles.previous_page_number }}">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            {% endif %}
+
+            {% create_page_range articles.paginator.page_range articles.number as page_range %}
+
+            {% if 1 not in page_range %}
+                <span>...</span>
+            {% endif %}
+            {% for page in page_range %}
+                {% if page == articles.number %}
+                    <span class="current-page page">{{ page }}</span>
+                {% else %}
+                    <a href="?page={{ page }}" class="page">{{ page }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if articles.paginator.num_pages not in page_range %}
+                <span>...</span>
+            {% endif %}
+
+            {% if articles.has_next %}
+                <a href="?page={{ articles.next_page_number }}">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                <a href="?page={{ articles.paginator.num_pages }}">
+                    <i class="fa fa-angle-double-right"></i>
+                </a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    {% else %}
+        <p>No articles</p>
+    {% endif %}
+</div>
+{% endblock %}

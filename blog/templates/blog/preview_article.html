@@ -1,0 +1,17 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<div class="preview-article article table">
+    {% image article.main_image fill-300x300 as tmp_photo %}
+    <div class="col img" style="background-image: url({{ tmp_photo.url }})"></div>
+    <div class="col">
+        <div class="preview-info">
+            <h4>{{ article.subject }}</h4>
+            <h3><a href="{{ article.url }}">{{ article.title }}</a></h3>
+            <h4 class="no-break">By {{ article.author }}&emsp;|&emsp;</h4><h5 class="no-break">{{ article.date }}</h5>
+            <p>{{ article.intro }}</p>
+        </div>
+        <p class="read-more-link"><a href="{{ article.url }}">
+            Read More&ensp;<i class="fa fa-angle-right fa-lg"></i>
+        </a></p>
+    </div>
+</div>

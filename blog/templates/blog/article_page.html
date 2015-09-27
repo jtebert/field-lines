@@ -1,0 +1,95 @@
+{% extends "page.html" %}
+
+{% load wagtailcore_tags wagtailimages_tags wagtailsettings_tags %}
+
+{% block body_class %}template-blogpage{% endblock %}
+
+{% block page-content %}
+{% get_settings %}
+
+<div class="col-md-8 no-gutter">
+    <div class="article">
+        {% if self.main_image %}
+            {% image self.main_image fill-800x450 class="article-photo" %}
+        {% endif %}
+
+        <div class="article-content">
+            <h4>{{ self.subject }}</h4>
+            <h3>{{ self.title }}</h3>
+            <h4 class="no-break">By {{ self.author }}&emsp;|&emsp;</h4><h5 class="no-break">{{ self.date }}</h5>
+
+            <p class="article-intro">{{ self.intro }}</p>
+
+            {{ self.body }}
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <!-- Author Information -->
+    <div class="info-box">
+        <h2 class="info-header">Author</h2>
+        <!--<img class="author-photo" src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Einstein-formal_portrait-35.jpg">-->
+        {% image self.author.portrait fill-300x400 class="author-photo" %}
+        <div class="author-info">
+            <p>{{ self.author.bio }}</p>
+            <p class="read-more-link"><a href="#">Read More&ensp;<i class="fa fa-angle-right fa-lg"></i></a></p>
+        </div>
+    </div>
+
+    <!-- Main Sources -->
+    {% if self.source_links.count >= 1 %}
+    <div class="info-box">
+        <h2 class="info-header">Source Article{{ self.source_links.count|pluralize }}</h2>
+            {% for source in self.source_links.all %}
+                <a {% if source.url %}href="{{ source.url }}"{% endif %} class="info-link-box"><p>{{ source.title }}</p></a>
+            {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Social Media Sharing Links -->
+
+    <div class="social-icons">
+        <h2 class="info-header">Share</h2>
+        <div class="social-info">
+            <a href="https://facebook.com/sharer.php?u={{ request.get_host }}{{ request.path }}" rel="nofollow" target="_blank" title="Share on Facebook">
+                <i class="fa fa-facebook fa-2x"></i></a>
+            <a href="https://plus.google.com/share?url={{ request.get_host }}{{ request.path }}" rel="nofollow" target="_blank" title="Share on Google+">
+                <i class="fa fa-google-plus fa-2x"></i></a>
+            <a href="http://www.linkedin.com/shareArticle?mini=true&url={{ request.get_host }}{{ request.path }}&title={{ self.title }}&summary={{ self.intro }}&source={{ request.get_host }}" rel="nofollow" target="_blank" title="Share on LinkedIn">
+                <i class="fa fa-linkedin fa-2x"></i></a>
+            <a href="http://www.reddit.com/submit?url={{ request.get_host }}{{ request.path }}&title={{ self.title }}" rel="nofollow" target="_blank" title="Share on Reddit">
+                <i class="fa fa-reddit fa-2x"></i></a>
+            <a href="http://www.tumblr.com/share/link?url={{ request.get_host }}{{ request.path }}&name={[ self.title }}&description={{ self.intro }}" rel="nofollow" target="_blank" title="Share on Tumblr">
+                <i class="fa fa-tumblr fa-2x"></i></a>
+            <a href="https://twitter.com/intent/tweet?text={{ self.title }}&url={{ request.get_host }}{{ request.path }}" rel="nofollow" target="_blank" title="Share on Twitter">
+                <i class="fa fa-twitter fa-2x"></i></a>
+            <!-- TODO: Add back on "related" and "via" when Twitter username defined somewhere -->
+            <!--<a href="https://twitter.com/intent/tweet?text={{ self.title }}&url={{ request.path }}&via={{ site.twitter_username }}&related={{ site.twitter_username }}" rel="nofollow" target="_blank" title="Share on Twitter">
+                <i class="fa fa-twitter fa-2x"></i></a>-->
+        </div>
+    </div>
+</div>
+
+{% if settings.home.GeneralSettings.disqus %}
+<div class="col-md-8">
+    <div class="info-box">
+        <h2 class="info-header">Comments</h2>
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES * * */
+            var disqus_shortname = '{{ settings.home.GeneralSettings.disqus }}';
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

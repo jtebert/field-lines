@@ -1,0 +1,7 @@
+.idea/*
+*~
+*.pyc
+media/*
+mysite/static/bower_components/*
+home/migrations/*
+blog/migrations/*

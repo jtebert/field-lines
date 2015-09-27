@@ -1,0 +1,29 @@
+{% load subject_pages to_class_name wagtailsettings_tags %}
+{% get_settings %}
+
+<!-- At some point try slide menu on left:
+     http://stackoverflow.com/questions/20863288/bootstrap-3-slide-in-menu-navbar-on-mobile
+ -->
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+               aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <i class="fa fa-bars fa-2x"></i>
+            </button>
+            {% if self|to_class_name != "HomePage" %}
+                <a class="navbar-brand" href="/">{{ settings.home.GeneralSettings.site_name }}</a>
+            {% endif %}
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                {% subject_pages as sp%}
+                {% for s, p in sp.items %}
+                    <li><a href="{{ p }}">{{ s }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</nav>

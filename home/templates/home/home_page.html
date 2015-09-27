@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags wagtailimages_tags wagtailsettings_tags static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block content %}
+{% get_settings %}
+
+<div class="container" id="content-wrapper">
+    <div class="col-md-12">
+        <h1>{{ settings.home.GeneralSettings.site_name }}</h1>
+    </div>
+
+    <div class="col-md-12 no-gutter">
+        {% include "navbar.html" %}
+
+        <div class="feature-article article table">
+        {% with self.featured_article as fa %}
+            {% image fa.main_image fill-800x600 as tmp_photo %}
+            <div class="col img" style="background-image: url({{ tmp_photo.url }})"></div>
+            <div class="col">
+                <div class="feature-info">
+                    <h4>{{ fa.subject }}</h4>
+                    <h3><a href="{{ fa.url }}">{{ fa.title }}</a></h3>
+                    <h4 class="no-break">By {{ fa.author }}&emsp;|&emsp;</h4><h5 class="no-break">{{ fa.date }}</h5>
+                    <p>{{ fa.intro }}</p>
+                </div>
+                <p class="read-more-link"><a href="{{ fa.url }}">
+                    Read More&ensp;<i class="fa fa-angle-right fa-lg"></i>
+                </a></p>
+            </div>
+        {% endwith %}
+        </div>
+
+
+
+
+    </div>
+
+    <div class="col-md-8">
+        {% for a in self.preview_articles.all %}
+            {% with a.article as article %}
+                {% include "blog/preview_article.html" %}
+            {% endwith %}
+        {% endfor %}
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="social-icons">
+            <h2 class="info-header">Social</h2>
+            <div class="social-info">
+                <i class="fa fa-facebook fa-2x"></i>
+                <i class="fa fa-twitter fa-2x"></i>
+                <i class="fa fa-google-plus fa-2x"></i>
+                <i class="fa fa-github fa-2x"></i>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h2 class="info-header">Latest</h2>
+            {% for article in self.latest_articles.all %}
+                <a class="info-link-box" href="{{ article.url }}">
+                    <h4>{{ article.subject }}</h4>
+                    <h3>{{ article.title }}</h3>
+                </a>
+            {% endfor %}
+            <a class="info-link-box read-more-link" href="{% slugurl 'articles' %}">
+                More&ensp;<i class="fa fa-angle-right fa-lg"></i>
+            </a>
+        </div>
+    </div>
+
+    {{ self.body|richtext }}
+</div>
+{% endblock %}

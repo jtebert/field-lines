@@ -1,0 +1,21 @@
+{% extends "page.html" %}
+
+{% load wagtailcore_tags %}
+
+{% block page-content %}
+
+<div class='col-md-8'>
+    <div class="info-box">
+        <h2 class="info-header">{{ self.title }}</h2>
+        <div class="article-content">
+            {{ self.intro|richtext }}
+            <form action="{% pageurl self %}" method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
