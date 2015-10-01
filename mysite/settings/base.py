@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 
     'blog',
     'wagtailsettings',
+    'images'
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -147,3 +148,7 @@ MEDIA_URL = '/media/'
 # Wagtail settings
 
 WAGTAIL_SITE_NAME = "mysite"
+
+WAGTAILIMAGES_IMAGE_MODEL = 'images.CustomImage'
+
+WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = True

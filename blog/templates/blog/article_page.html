@@ -1,6 +1,6 @@
 {% extends "page.html" %}
 
-{% load wagtailcore_tags wagtailimages_tags wagtailsettings_tags %}
+{% load wagtailcore_tags wagtailimages_tags wagtailsettings_tags make_markdown %}
 
 {% block body_class %}template-blogpage{% endblock %}
 
@@ -18,9 +18,16 @@
             <h3>{{ self.title }}</h3>
             <h4 class="no-break">By {{ self.author }}&emsp;|&emsp;</h4><h5 class="no-break">{{ self.date }}</h5>
 
-            <p class="article-intro">{{ self.intro }}</p>
+            <div class="article-body">
+                {% for block in self.body %}
+                    {% if block.block_type == 'text' %}
+                        {{ block|make_markdown }}
+                    {% else %}
+                        {{ block }}
+                    {% endif %}
+                {% endfor %}
+            </div>
 
-            {{ self.body }}
         </div>
     </div>
 </div>
@@ -29,11 +36,20 @@
     <!-- Author Information -->
     <div class="info-box">
         <h2 class="info-header">Author</h2>
-        <!--<img class="author-photo" src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Einstein-formal_portrait-35.jpg">-->
-        {% image self.author.portrait fill-300x400 class="author-photo" %}
-        <div class="author-info">
-            <p>{{ self.author.bio }}</p>
-            <p class="read-more-link"><a href="#">Read More&ensp;<i class="fa fa-angle-right fa-lg"></i></a></p>
+        <div class="table">
+            {% if self.author.portrait %}
+                {% image self.author.portrait fill-350x350 as tmp_photo %}
+                <div class="col img" style="background-image: url({{ tmp_photo.url }})"></div>
+            {% endif %}
+            <div class="col">
+                <div class="preview-info">
+                    <h3><a href="{{ self.author.url }}">{{ self.author.title }}</a></h3>
+                    <p>{{ self.author.bio }}</p>
+                </div>
+                <p class="read-more-link"><a href="{{ self.author.url }}">
+                    Read More&ensp;<i class="fa fa-angle-right fa-lg"></i>
+                </a></p>
+            </div>
         </div>
     </div>
 
@@ -42,7 +58,7 @@
     <div class="info-box">
         <h2 class="info-header">Source Article{{ self.source_links.count|pluralize }}</h2>
             {% for source in self.source_links.all %}
-                <a {% if source.url %}href="{{ source.url }}"{% endif %} class="info-link-box"><p>{{ source.title }}</p></a>
+                <a {% if source.url %}href="{{ source.url }}"{% endif %} class="info-link-box"><p>{{ source.title|make_markdown }}</p></a>
             {% endfor %}
     </div>
     {% endif %}

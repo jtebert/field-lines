@@ -1,5 +1,5 @@
 {% extends "page.html" %}
-{% load static wagtailcore_tags %}
+{% load static wagtailcore_tags wagtailsettings_tags %}
 
 {% block body_class %}template-searchresults{% endblock %}
 
@@ -10,6 +10,8 @@
 {% endblock %}
 
 {% block page-content %}
+    {% get_settings %}
+
     {% comment %}
     <h1>Search</h1>
 
@@ -58,7 +60,7 @@
         google.setOnLoadCallback(function() {
             var customSearchOptions = {};
             customSearchOptions['enableOrderBy'] = false;
-            var customSearchControl =   new google.search.CustomSearchControl('008774335833332980458:jlujwmqvwyo', customSearchOptions);
+            var customSearchControl = new google.search.CustomSearchControl('{{ settings.home.GeneralSettings.google_custom_search_key }}', customSearchOptions);
             customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
             var options = new google.search.DrawOptions();
             options.setAutoComplete(true);

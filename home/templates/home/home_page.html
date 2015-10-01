@@ -9,7 +9,7 @@
 
 <div class="container" id="content-wrapper">
     <div class="col-md-12">
-        <h1>{{ settings.home.GeneralSettings.site_name }}</h1>
+        <a href="{% slugurl 'home' %}"><h1>{{ settings.home.GeneralSettings.site_name }}</h1></a>
     </div>
 
     <div class="col-md-12 no-gutter">
@@ -22,7 +22,7 @@
             <div class="col">
                 <div class="feature-info">
                     <h4>{{ fa.subject }}</h4>
-                    <h3><a href="{{ fa.url }}">{{ fa.title }}</a></h3>
+                    <h3 class="title"><a href="{{ fa.url }}">{{ fa.title }}</a></h3>
                     <h4 class="no-break">By {{ fa.author }}&emsp;|&emsp;</h4><h5 class="no-break">{{ fa.date }}</h5>
                     <p>{{ fa.intro }}</p>
                 </div>
@@ -32,10 +32,6 @@
             </div>
         {% endwith %}
         </div>
-
-
-
-
     </div>
 
     <div class="col-md-8">
@@ -70,8 +66,61 @@
                 More&ensp;<i class="fa fa-angle-right fa-lg"></i>
             </a>
         </div>
+
+        {% include 'links-box.html' %}
     </div>
 
-    {{ self.body|richtext }}
+
+    <div id="mynetwork"></div>
+
+
 </div>
+{% endblock %}
+
+{% block extra_css %}
+    <link href="{% static 'node_modules/vis/dist/vis.css' %}" type="text/css"/>
+    <style type="text/css">
+        #mynetwork {
+            width: 600px;
+            height: 400px;
+            border: 1px solid #d3d3d3;
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{% static 'node_modules/vis/dist/vis.js' %}"></script>
+    <script type="text/javascript">
+        console.log('running');
+        // Create array of nodes
+        var nodes = new vis.DataSet([
+            {id: 1, label: 'Node 1'},
+            {id: 2, label: 'Node 2'},
+            {id: 3, label: 'Node 3'},
+            {id: 4, label: 'Node 4'},
+            {id: 5, label: 'Node 5'}
+        ]);
+
+        // Create an array of edges
+        var edges = new vis.DataSet([
+            {from: 1, to: 3},
+            {from: 1, to: 2},
+            {from: 2, to: 4},
+            {from: 2, to: 5}
+        ]);
+
+        // Create network
+        var container = document.getElementById('network');
+
+        // provide data in vis format
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+
+        var options = {};
+
+        // Initialize
+        var network = new vis.Network(container, data, options);
+    </script>
 {% endblock %}

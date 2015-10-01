@@ -19,6 +19,8 @@ from blog.models import ArticlePage
 
 
 class HomePage(Page):
+    parent_page_types = []
+
     body = RichTextField(blank=True)
     featured_article = models.ForeignKey(ArticlePage, null=True, on_delete=models.SET_NULL)
 
@@ -47,6 +49,8 @@ class PreviewArticle(Orderable):
 
 
 class InfoPage(Page):
+    subpage_types = []
+
     body = StreamField([
         ('text', blocks.RichTextBlock(icon='pilcrow')),
         ('image', ImageChooserBlock(icon='image')),
@@ -62,6 +66,9 @@ class FormField(AbstractFormField):
     page = ParentalKey('FormPage', related_name='form_fields')
 
 class FormPage(AbstractEmailForm):
+    subpage_types = []
+    parent_page_types = [HomePage]
+
     intro = RichTextField(blank=True)
     thank_you_text = RichTextField(blank=True)
 
@@ -118,8 +125,12 @@ class GeneralSettings(BaseSetting):
         help_text="Site name on Disqus. Comments will only appear if this is provided.")
     google_analytics_id = models.CharField(
         max_length=127,
-        blank=True,
+        blank=True, null=True,
         help_text='Google Analytics Tracking ID')
+    google_custom_search_key = models.CharField(
+        max_length=127,
+        blank=True, null=True,
+        help_text='Unique ID for Google Custom Search')
 
     panels = [
         FieldPanel('site_name'),
@@ -128,4 +139,8 @@ class GeneralSettings(BaseSetting):
         FieldPanel('pagination_count'),
         FieldPanel('disqus'),
         FieldPanel('google_analytics_id'),
+        FieldPanel('google_custom_search_key'),
     ]
+
+class SandboxPage(Page):
+    pass

@@ -5,9 +5,9 @@
 {% block page-content %}
 
 <div class='col-md-8'>
-    <div class="info-box">
-        <h2 class="info-header">{{ self.title }}</h2>
+    <div class="article">
         <div class="article-content">
+            <h3>{{ self.title }}</h3>
             {{ self.intro|richtext }}
             <form action="{% pageurl self %}" method="POST">
                 {% csrf_token %}

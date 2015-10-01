@@ -248,7 +248,6 @@ h3 a:hover {
 
 .feature-info, .preview-info, .author-info {
     padding: 16px;
-    float: right;
 }
 
 .general-info {
@@ -259,7 +258,7 @@ h3 a:hover {
     margin-bottom: 32px;
 }
 
-.read-more-link {
+.read-more-link, .general-link {
     text-transform: uppercase;
     font-weight: 600;
     margin: 0;
@@ -268,36 +267,51 @@ h3 a:hover {
     bottom: 16px;
     right: 16px;
 }
+a.info-link-box.read-more-link {
+    color: #EB5B4C;
+}
+.general-link {
+    color: #111;
+}
 .read-more-link .fa-angle-right {
     display: inline-block;
     line-height: 9px;
 }
-.info-link-box.read-more-link {
+.info-link-box.read-more-link, .info-link-box.general-link {
     position: static;
     display: block;
     padding: 10px 16px;
     margin: 0;
-    color: #EB5B4C;
 }
 a.info-link-box.read-more-link:hover {
     color: #22284f;
+}
+a.info-link-box.general-link:hover {
+    color: #EB5B4C;
 }
 
 
 /* Home page other article preview */
 
 .article {
-    overflow: auto;
+    overflow: hidden;
 }
 .article > h3 {
     margin: 16px;
 }
-.article.table {
+.article.table, .info-box .table {
     display: table;
     border-collapse: collapse;
     width: 100%;
 }
-.article .col {
+.info-box .table {
+    margin-bottom: 0;
+}
+.info-box h3 {
+    font-size: 28px;
+    margin: 0 0 16px 0;
+}
+.article .col, .info-box .col {
     display: table-cell;
     padding: 0;
 }
@@ -308,6 +322,7 @@ a.info-link-box.read-more-link:hover {
 
 .preview-article .col.img {width: 40%;}
 .feature-article .col.img {width: 50%;}
+.info-box .col.img {width: 30%;}
 
 @media (max-width: 767px) {
     .feature-article .col {
@@ -430,28 +445,37 @@ a.info-link-box:hover h3 {
     margin: 20px 0 30px 0;
     font-weight: 300;
 }
-.richtext-image {margin: 8px 0;}
-.richtext-image.left, .richtext-image.right {
-    height: auto;
-    max-width: calc(50% - 16px); /* TODO: Find some way to collapse float margins to reduce this to 8px */
+.article-body {
+    margin-top: 30px;
 }
-.richtext-image.left {
-    float: left;
-    margin-right: 16px;
-}
-.richtext-image.right {
-    float: right;
-    margin-left: 16px;
-}
-.rich-text h2, .rich-text h3, .rich-text h4, .rich-text h5 { /* Headers in Article Body*/
+.article-body h1, .article-body h2, .article-body h3,
+.article-body h4, .article-body h5, .article-body h6 { /* Headers in Article Body*/
     font-family: Oswald, sans-serif;
     color: #111;
     text-transform: none;
 }
-.rich-text h2 {font-size: 42px; margin: 14px 0;}
-.rich-text h3 {font-size: 32px; margin: 16px 0;}
-.rich-text h4 {font-size: 22px; margin: 18px 0;}
-.rich-text h5 {font-size: 16px; margin: 20px 0;}
+.article-body h1 {font-size: 42px; margin: 14px 0;}
+.article-body h2 {font-size: 32px; margin: 16px 0;}
+.article-body h3 {font-size: 28px; margin: 17px 0;}
+.article-body h4 {font-size: 22px; margin: 18px 0;}
+.article-body h5 {font-size: 22px; margin: 18px 0;}
+.article-body h6 {font-size: 16px; margin: 20px 0;}
+
+.article-body figure {
+    margin: 0 -16px 16px -16px;
+}
+.article-body figure img {
+    width: 100%;
+    height: auto;
+}
+
+blockquote {
+    border-left-color: #aaacc0;
+}
+.article-content hr {
+    border-top-color: #aaacc0;
+    margin: 20px -16px;
+}
 
 .richtext-image {
     height: auto;
@@ -551,6 +575,9 @@ select, input, textarea {
     border: none;
     outline: none;
 }
+textarea {
+    max-width: 100%;
+}
 select, input {
     padding: 5px 10px;
 }
@@ -589,8 +616,16 @@ input[type="submit"]:focus, input[type="button"]:focus {
     .container{padding: 0 15px;}
     .container>.navbar-header{margin: 0 -15px;}
 
-    h3 {
+    h3.title {
         font-size: 3.5vw;
+    }
+    .info-box .col {
+        display: block;
+        width: 100%;
+    }
+    .info-box .col.img {
+        width: 100%;
+        padding-bottom: 56.26%;
     }
 }
 

@@ -9,6 +9,8 @@ register = template.Library()
 def subject_pages():
     pages = {}
     for s in Subject.objects.all():
-        pages[s.subject_name] = ArticleIndexPage.objects.filter(subject=s)[0].url
+        p = ArticleIndexPage.objects.filter(subject=s).first()
+        if p is not None:
+            pages[s.subject_name] = p.url
     pages = OrderedDict(sorted(pages.items()))
     return pages

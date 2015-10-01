@@ -1,0 +1,28 @@
+{% extends "page.html" %}
+
+{% load wagtailcore_tags wagtailimages_tags subject_pages create_page_range %}
+
+{% block body_class %}template-blogindexpage{% endblock %}
+
+{% block page-content %}
+
+<div class="col-md-4">
+    <div class="info-box" id="index-intro">
+        <h2 class="info-header">{{ self.title }}</h2>
+        <div class="general-info">
+            {{ self.intro|richtext }}
+        </div>
+    </div>
+</div>
+
+<div class="col-md-8">
+    {% if self.authors %}
+        {% for author in self.authors %}
+            {% include "blog/preview_author.html" %}
+        {% endfor %}
+
+    {% else %}
+        <p>No articles</p>
+    {% endif %}
+</div>
+{% endblock %}

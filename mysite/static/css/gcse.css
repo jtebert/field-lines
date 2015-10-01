@@ -32,7 +32,7 @@
     width: 100%;
 }
 
-table.gsc-branding, #cse .gsc-url-bottom, #cse .gcsc-branding, #cse .gsc-clear-button {
+ #cse .gsc-url-bottom, #cse .gsc-clear-button {
     display: none;
 }
 
@@ -41,6 +41,7 @@ table.gsc-branding, #cse .gsc-url-bottom, #cse .gcsc-branding, #cse .gsc-clear-b
     font-family: Oswald, sans-serif;
     font-size: 24px;
     color: #111;
+    margin-bottom: 6px;
 }
 
 #cse .gs-title:hover {
@@ -91,4 +92,12 @@ table.gsc-branding, #cse .gsc-url-bottom, #cse .gcsc-branding, #cse .gsc-clear-b
 
 #cse .gsc-cursor-page.gsc-cursor-current-page {
     color: #111;
+}
+
+#cse .gsc-thumbnail {
+    //padding-right: 50px;
+}
+
+#cse .gs-image {
+    width: 80px;
 }

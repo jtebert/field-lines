@@ -4,13 +4,17 @@
 {% block page-content %}
 
 <div class='col-md-8'>
-    <div class="info-box">
-        <h2 class="info-header">{{ self.title }}</h2>
+    <div class="article">
         <div class="article-content">
+            <h3>{{ self.title }}</h3>
             {{ self.thank_you_text|richtext }}
-            <a class="read-more-link" href="{% slugurl 'home' %}"><i class="fa fa-angle-left">&ensp;Return to Home</i></a>
+            <a class="read-more-link" href="{% slugurl 'home' %}"><i class="fa fa-angle-left">&ensp;Return Home</i></a>
         </div>
     </div>
+</div>
+
+<div class="col-md-4">
+    {% include 'links-box.html' %}
 </div>
 
 {% endblock %}

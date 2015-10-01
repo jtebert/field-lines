@@ -39,9 +39,12 @@ class AuthorSnippet(models.Model):
     Create a profile for each author, which will be paired with the articles they write
     """
     author_name = models.CharField(max_length=255)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, null=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL)
     portrait = models.ForeignKey(
-        'wagtailimages.Image',
+        'images.CustomImage',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -61,15 +64,24 @@ class AuthorSnippet(models.Model):
     def __unicode__(self):
         return self.author_name
 
+    class Meta:
+        verbose_name = "Author"
+
 
 class CaptionedImageBlock(blocks.StructBlock):
     image = ImageChooserBlock()
-    caption = blocks.CharBlock()
-    source = blocks.URLBlock()
+    caption = blocks.CharBlock(help_text='This will override the default caption', blank=True)
 
     class Meta:
         icon = 'image'
         template = 'blog/captioned_image_block.html'
+        label = 'Image'
+
+class CodeBlock(blocks.TextBlock):
+    class Meta:
+        template = 'blog/code_blog.html'
+        icon = 'code'
+        label = 'Code'
 
 
 class ArticlePage(Page):
@@ -77,21 +89,13 @@ class ArticlePage(Page):
     subpage_types = []
 
     author = models.ForeignKey(
-        'AuthorSnippet',
+        'AuthorPage',
         null=True,
-        blank=True,
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    """subject = models.ForeignKey(
-        'Subject',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name='+'
-    )"""
     main_image = models.ForeignKey(
-        'wagtailimages.Image',
+        'images.CustomImage',
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -100,8 +104,7 @@ class ArticlePage(Page):
     date = models.DateField("Post date")
     intro = models.TextField(max_length=250)
     body = StreamField([
-        ('text', blocks.RichTextBlock(icon='pilcrow')),
-        #('image', ImageChooserBlock(icon='image')),
+        ('text', blocks.TextBlock(icon='pilcrow')),
         ('image', CaptionedImageBlock()),
         ('embed', EmbedBlock(icon='media')),
     ])
@@ -112,8 +115,7 @@ class ArticlePage(Page):
     )
 
     content_panels = Page.content_panels + [
-        #SnippetChooserPanel('subject'),
-        SnippetChooserPanel('author'),
+        PageChooserPanel('author'),
         FieldPanel('date'),
         InlinePanel('source_links', label="Sources"),
         ImageChooserPanel('main_image'),
@@ -132,7 +134,6 @@ class ArticlePage(Page):
         return self.get_ancestors().type(ArticleIndexPage).last()
 
     def subject(self):
-        #print >> sys.stderr, "HELLO"
         subject = ArticleIndexPage.objects.ancestor_of(self).last().subject
         if subject is not None:
             return subject
@@ -140,7 +141,6 @@ class ArticlePage(Page):
             return ""
 
     def all_subjects(self):
-        print >> sys.stderr, "HELLO"
         subjects = []
         for s in Subject.objects.all():
             subjects.append(ArticleIndexPage.objects.filter(subject=s)[0])
@@ -148,8 +148,8 @@ class ArticlePage(Page):
 
 
 class SourceLink(models.Model):
-    title = models.TextField(max_length=1023, help_text="Source Title")
-    url = models.URLField('Link to Source', blank=True)
+    title = models.TextField(max_length=1023, help_text="Markdown is applied. Use only a standard citation format.", blank=True, null=True)
+    url = models.URLField('Link to Source', blank=True, null=True)
 
     panels = [
         FieldPanel('title'),
@@ -210,8 +210,16 @@ class ArticleIndexRelatedLink(Orderable, RelatedLink):
     page = ParentalKey('ArticleIndexPage', related_name='related_links')
 
 
+
 class ArticleIndexPage(Page):
-    subject = models.OneToOneField(Subject, blank=True, null=True, on_delete=models.SET_NULL, related_name="+")
+    subpage_types = ['ArticleIndexPage', 'ArticlePage']
+
+    subject = models.OneToOneField(
+        Subject,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+")
     intro = RichTextField(blank=True)
 
     content_panels = Page.content_panels + [
@@ -231,9 +239,12 @@ class ArticleIndexPage(Page):
 
         # Pagination
         page = request.GET.get('page')
-        page_size = 3
-        if hasattr(settings, 'ARTICLE_PAGINAION_PER_PAGE'):
-            page_size = settings.ARTICLE_PAGINAION_PER_PAGE
+        page_size = 10
+        #if hasattr(settings, 'ARTICLE_PAGINAION_PER_PAGE'):
+        #    page_size = settings.ARTICLE_PAGINAION_PER_PAGE
+        from home.models import GeneralSettings
+        if GeneralSettings.for_site(request.site).pagination_count:
+            page_size = GeneralSettings.for_site(request.site).pagination_count
 
         if page_size is not None:
             paginator = Paginator(articles, page_size)
@@ -247,8 +258,6 @@ class ArticleIndexPage(Page):
         context['articles'] = articles
         return context
 
-
-
     def articles(self, subject_filter=None):
         """
         Return all articles if no subject specified, otherwise only those from that Subject
@@ -260,3 +269,48 @@ class ArticleIndexPage(Page):
             articles = articles.filter(subject=subject_filter)
         articles = articles.order_by('-date')
         return articles
+
+
+class AuthorPage(Page):
+    parent_page_types = ['AuthorIndexPage']
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL, )
+    portrait = models.ForeignKey(
+        'images.CustomImage',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+'
+    )
+    bio = models.TextField(max_length=800, null=True, blank=True)
+    personal_website = models.URLField(blank=True)
+
+    content_panels = [
+        FieldPanel('title'),
+        FieldPanel('user'),
+        FieldPanel('bio'),
+        ImageChooserPanel('portrait'),
+        FieldPanel('personal_website'),
+    ]
+
+    def author_articles(self):
+        return ArticlePage.objects.live().filter(author=self).order_by('title')
+
+    def __unicode__(self):
+        return self.title
+
+
+class AuthorIndexPage(Page):
+    subpage_types = ['AuthorPage']
+
+    intro = RichTextField(blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro')
+    ]
+
+    def authors(self):
+        return AuthorPage.objects.all()
