@@ -1,5 +1,7 @@
 Django==1.8.4
+Markdown==2.6.2
 Pillow==2.9.0
+Pygments==2.0.2
 Unidecode==0.4.18
 Willow==0.2.1
 argparse==1.2.1
