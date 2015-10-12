@@ -248,6 +248,7 @@ h3 a:hover {
 
 .feature-info, .preview-info, .author-info {
     padding: 16px;
+    padding-bottom: 32px;
 }
 
 .general-info {
@@ -255,7 +256,7 @@ h3 a:hover {
 }
 
 .feature-info p, .preview-info p {
-    margin-bottom: 32px;
+    //margin-bottom: 32px;
 }
 
 .read-more-link, .general-link {
@@ -368,7 +369,7 @@ a.info-link-box.general-link:hover {
     color: #fff;
 }
 .social-icons .fa {
-    margin-right: 16px;
+    margin-right: 22px;
 }
 .info-header {
     display: block;
@@ -446,7 +447,7 @@ a.info-link-box:hover h3 {
     font-weight: 300;
 }
 .article-body {
-    margin-top: 30px;
+    margin-top: 16px;
 }
 .article-body h1, .article-body h2, .article-body h3,
 .article-body h4, .article-body h5, .article-body h6 { /* Headers in Article Body*/
@@ -502,19 +503,52 @@ blockquote {
     width: 100%;
     height: 100%;
 }
-figure figcaption {
+figure figcaption, .main-image-source {
     font-size: 14px;
     line-height: 18px;
     margin: 4px 16px 0 16px;
     color: #444;
+}
+.main-image-source {
+    text-align: right;
 }
 
 #disqus_thread {
     margin: 16px;
 }
 
+.extra-info {
+    background-color: #fff;
+    margin: 0 -16px 16px -16px;
+}
 
-/* Author info TODO: Update to match other photo stuff */
+h4.extra-info-header {
+    background-color: #3f67c0;
+    color: #e1e2e9;
+    padding: 10px 16px;
+    margin: 0;
+}
+.extra-info-body {
+    padding: 0 16px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.rotate{
+    -moz-transition: all .5s linear;
+    -webkit-transition: all .5s linear;
+    transition: all .2s linear;
+}
+
+.rotate.down{
+    -ms-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);
+    -webkit-transform:rotate(90deg);
+    transform:rotate(90deg);
+}
+
+
+/* Author info */
 
 .author-photo {
     height: auto;
@@ -595,6 +629,69 @@ input[type="submit"]:focus, input[type="button"]:focus {
     background-color: #35b5eb;
 }
 
+
+/* Token Stuff */
+
+#token-box {
+    background-color: #fff;
+    padding: 10px 10px 0 10px;
+    margin-bottom: 16px;
+}
+#tokens-input {
+    width: 0;
+    height: 35px;
+    padding: 5px 0;
+    margin: 0 0 10px 0;
+}
+.token, .tag {
+    background-color: #3F67C0;
+    color: #e1e2e9;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    display: inline-block;
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+}
+.token .fa {
+    font-size: 14px;
+    line-height: 24px;
+    padding: 5px 10px;
+    margin: -5px -10px -5px 0;
+}
+.token a, .tag a {
+    color: #e1e2e9;
+}
+.token:hover, .tag:hover {
+    background-color: #35b5eb;
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+}
+.token:hover a, .tag:hover a {
+    color: #fff;
+}
+.tag {
+    padding: 0;
+}
+.tag a {
+    display: block;
+    padding: 5px 10px;
+}
+
+
+/* Network styling */
+
+#mynetwork {
+    //background-color: red;
+    width: 100%;
+    height: 600px;
+}
 
 
 /*div[class^="col"]{padding-left:0; padding-right:0;}*/

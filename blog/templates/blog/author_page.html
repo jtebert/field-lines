@@ -1,0 +1,29 @@
+{% extends 'page.html' %}
+
+{% load wagtailimages_tags make_markdown %}
+
+{% block page-content %}
+    <div class="col-md-12 no-gutter">
+        <div class="preview-article article table">
+            {% image self.portrait fill-500x500 as tmp_photo %}
+            <div class="col img" style="background-image: url({{ tmp_photo.url }})" {{ tmp_photo.attrs }}></div>
+            <div class="col">
+                <div class="preview-info">
+                    <h3>{{ self.title }}</h3>
+                    {{ self.bio|make_markdown }}
+                </div>
+            </div>
+            {% if self.personal_website %}
+                <p class="read-more-link"><a href="{{ self.personal_website }}">
+                    Visit Website&ensp;<i class="fa fa-angle-right fa-lg"></i>
+                </a></p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-8 col-md-offset-4">
+        {% for article in self.author_articles.all %}
+            {% include 'blog/preview_article.html' %}
+        {% endfor %}
+    </div>
+{% endblock %}

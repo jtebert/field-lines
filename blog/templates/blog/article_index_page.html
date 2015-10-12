@@ -1,6 +1,6 @@
 {% extends "page.html" %}
 
-{% load wagtailcore_tags wagtailimages_tags subject_pages create_page_range %}
+{% load wagtailcore_tags wagtailimages_tags subject_pages create_page_range make_markdown %}
 
 {% block body_class %}template-blogindexpage{% endblock %}
 
@@ -10,7 +10,7 @@
     <div class="info-box" id="index-intro">
         <h2 class="info-header">{{ self.title }}</h2>
         <div class="general-info">
-            {{ self.intro|richtext }}
+            {{ self.intro|make_markdown }}
         </div>
     </div>
 </div>

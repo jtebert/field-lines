@@ -1,11 +1,20 @@
-{% load wagtailimages_tags %}
+{% load wagtailimages_tags make_markdown %}
 
 <figure class="captioned-image">
     {% image self.image original %}
     <figcaption>
-        {{ self.caption}}
-        {% if self.source %}
-            (<a href="{{ self.source }}">Source</a>)
+        {% if self.caption %}
+            {{ self.caption|make_markdown }}
+        {% elif self.image.caption %}
+            {{ self.image.caption|make_markdown }}
+        {% endif %}
+
+        {% if self.image.source_url and self.image.source_name %}
+            (<a href="{{ self.image.source_url }}">{{ self.image.source_name }}</a>)
+        {% elif self.image.source_url %}
+            (<a href="{{ self.image.source_url }}">Source</a>)
+        {% elif self.image.source_name %}
+            ({{ self.image.source_name }})
         {% endif %}
     </figcaption>
 </figure>

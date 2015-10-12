@@ -6,6 +6,6 @@
     <h2 class="info-header">Links</h2>
     <a class="info-link-box general-link" href="{% slugurl 'contact' %}"><i class="fa fa-fw fa-envelope"></i>&emsp;Contact Us</a>
     <a class="info-link-box general-link" href="{% slugurl 'about' %}"><i class="fa fa-fw fa-flask"></i>&emsp;About {{ settings.home.GeneralSettings.site_name}}</a>
-    <a class="info-link-box general-link" href="{% slugurl 'search' %}"><i class="fa fa-fw fa-search"></i>&emsp;Search Articles</a>
-    <a class="info-link-box general-link" href="{% slugurl 'feed' %}"><i class="fa fa-fw fa-rss"></i>&emsp;RSS Feed</a>
+    <a class="info-link-box general-link" href="{% url 'search' %}"><i class="fa fa-fw fa-search"></i>&emsp;Search Articles</a>
+    <a class="info-link-box general-link" href="{% url 'feed' %}"><i class="fa fa-fw fa-rss"></i>&emsp;RSS Feed</a>
 </div>

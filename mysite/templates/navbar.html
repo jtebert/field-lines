@@ -1,4 +1,4 @@
-{% load subject_pages to_class_name wagtailsettings_tags %}
+{% load subject_pages to_class_name wagtailsettings_tags wagtailcore_tags %}
 {% get_settings %}
 
 <!-- At some point try slide menu on left:
@@ -17,7 +17,7 @@
             {% endif %}
         </div>
 
-        <div class="col-sm-3 col-md-3 pull-right">
+        <!--<div class="col-sm-3 col-md-3 pull-right">
             <form class="navbar-form" role="search" action="{% url 'search' %}">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Search" name="q" id="srch-term">
@@ -26,7 +26,7 @@
                     </div>
                 </div>
             </form>
-        </div>
+        </div>-->
 
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -34,6 +34,10 @@
                 {% for s, p in sp.items %}
                     <li><a href="{{ p }}">{{ s }}</a></li>
                 {% endfor %}
+                <li><a href="{% url 'explore' %}">Explore Articles</a></li>
+                <li><a href="{% url 'network' %}">See Network</a></li>
+                <li><a href="{% url 'search' %}">Search</a></li>
+                <li><a href="{% slugurl 'about' %}">About</a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->

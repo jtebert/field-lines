@@ -19,11 +19,9 @@ from wagtail.wagtailsearch import index
 from wagtail.wagtailsnippets.models import register_snippet
 from wagtail.wagtailsnippets.edit_handlers import SnippetChooserPanel
 
-import sys
-
 
 @register_snippet
-class Subject(models.Model):
+class SubjectSnippet(models.Model):
     """
     Identifies the different subjects under which to categorize articles
     """
@@ -38,6 +36,7 @@ class AuthorSnippet(models.Model):
     """
     Create a profile for each author, which will be paired with the articles they write
     """
+    # NOT USED NOW
     author_name = models.CharField(max_length=255)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -70,18 +69,42 @@ class AuthorSnippet(models.Model):
 
 class CaptionedImageBlock(blocks.StructBlock):
     image = ImageChooserBlock()
-    caption = blocks.CharBlock(help_text='This will override the default caption', blank=True)
+    caption = blocks.CharBlock(help_text='This will override the default caption. This text will be formatted with markdown.',
+                               blank=True, null=True, required=False)
 
     class Meta:
         icon = 'image'
         template = 'blog/captioned_image_block.html'
         label = 'Image'
 
+
+class ExtraInformationBlock(blocks.StructBlock):
+    title = blocks.CharBlock()
+    text = blocks.TextBlock(help_text='This text will be formatted with markdown.')
+
+    class Meta:
+        icon = 'plus'
+        template = 'blog/extra_information_block.html'
+        label = 'Extra Information'
+
+
 class CodeBlock(blocks.TextBlock):
     class Meta:
         template = 'blog/code_blog.html'
         icon = 'code'
         label = 'Code'
+
+
+class SubjectPanelField(Orderable):
+    page = ParentalKey('ArticlePage', related_name='subjects')
+    subject = models.ForeignKey(SubjectSnippet)
+
+    panels = [
+        SnippetChooserPanel('subject'),
+    ]
+
+    def __unicode__(self):
+        return unicode(self.subject)
 
 
 class ArticlePage(Page):
@@ -97,16 +120,18 @@ class ArticlePage(Page):
     main_image = models.ForeignKey(
         'images.CustomImage',
         null=True,
-        blank=True,
         on_delete=models.SET_NULL,
         related_name='+'
     )
     date = models.DateField("Post date")
-    intro = models.TextField(max_length=250)
+    intro = models.TextField(
+        max_length=250,
+        help_text='This will only appear in article previews, not with the full article. This text will be formatted with markdown.')
     body = StreamField([
-        ('text', blocks.TextBlock(icon='pilcrow')),
+        ('text', blocks.TextBlock(icon='pilcrow', help_text='This text will be formatted with markdown.')),
         ('image', CaptionedImageBlock()),
         ('embed', EmbedBlock(icon='media')),
+        ('extra_information', ExtraInformationBlock()),
     ])
 
     search_fields = Page.search_fields + (
@@ -116,6 +141,7 @@ class ArticlePage(Page):
 
     content_panels = Page.content_panels + [
         PageChooserPanel('author'),
+        InlinePanel('subjects', label='Subjects'),
         FieldPanel('date'),
         InlinePanel('source_links', label="Sources"),
         ImageChooserPanel('main_image'),
@@ -133,22 +159,25 @@ class ArticlePage(Page):
         # Find closest ancestor which is article page
         return self.get_ancestors().type(ArticleIndexPage).last()
 
-    def subject(self):
+    """def subject(self):
+        # TODO: Replace/remove
         subject = ArticleIndexPage.objects.ancestor_of(self).last().subject
         if subject is not None:
             return subject
         else:
             return ""
+    """
 
     def all_subjects(self):
+        # TODO: Replace/remove
         subjects = []
-        for s in Subject.objects.all():
+        for s in SubjectSnippet.objects.all():
             subjects.append(ArticleIndexPage.objects.filter(subject=s)[0])
         return subjects
 
 
 class SourceLink(models.Model):
-    title = models.TextField(max_length=1023, help_text="Markdown is applied. Use only a standard citation format.", blank=True, null=True)
+    title = models.TextField(max_length=1023, help_text="This text will be formatted with markdown. Use a standard citation format.", blank=True, null=True)
     url = models.URLField('Link to Source', blank=True, null=True)
 
     panels = [
@@ -210,21 +239,22 @@ class ArticleIndexRelatedLink(Orderable, RelatedLink):
     page = ParentalKey('ArticleIndexPage', related_name='related_links')
 
 
-
 class ArticleIndexPage(Page):
-    subpage_types = ['ArticleIndexPage', 'ArticlePage']
+    subpage_types = ['ArticlePage']
 
     subject = models.OneToOneField(
-        Subject,
+        SubjectSnippet,
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
         related_name="+")
-    intro = RichTextField(blank=True)
+    intro = models.TextField(
+        blank=True,
+        help_text='This text will be formatted with markdown.')
 
     content_panels = Page.content_panels + [
         FieldPanel('intro', classname="full"),
-        SnippetChooserPanel('subject', Subject),
+        SnippetChooserPanel('subject', SubjectSnippet),
         #InlinePanel('related_links', label="Related links"),
     ]
 
@@ -240,8 +270,6 @@ class ArticleIndexPage(Page):
         # Pagination
         page = request.GET.get('page')
         page_size = 10
-        #if hasattr(settings, 'ARTICLE_PAGINAION_PER_PAGE'):
-        #    page_size = settings.ARTICLE_PAGINAION_PER_PAGE
         from home.models import GeneralSettings
         if GeneralSettings.for_site(request.site).pagination_count:
             page_size = GeneralSettings.for_site(request.site).pagination_count
@@ -258,6 +286,7 @@ class ArticleIndexPage(Page):
         context['articles'] = articles
         return context
 
+
     def articles(self, subject_filter=None):
         """
         Return all articles if no subject specified, otherwise only those from that Subject
@@ -273,6 +302,7 @@ class ArticleIndexPage(Page):
 
 class AuthorPage(Page):
     parent_page_types = ['AuthorIndexPage']
+    subpage_types = []
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -285,7 +315,10 @@ class AuthorPage(Page):
         on_delete=models.SET_NULL,
         related_name='+'
     )
-    bio = models.TextField(max_length=800, null=True, blank=True)
+    bio = models.TextField(
+        max_length=800,
+        null=True, blank=True,
+        help_text='This text will be formatted with markdown.')
     personal_website = models.URLField(blank=True)
 
     content_panels = [
@@ -306,7 +339,9 @@ class AuthorPage(Page):
 class AuthorIndexPage(Page):
     subpage_types = ['AuthorPage']
 
-    intro = RichTextField(blank=True)
+    intro = models.TextField(
+        blank=True,
+        help_text='This text will be formatted with markdown.')
 
     content_panels = Page.content_panels + [
         FieldPanel('intro')

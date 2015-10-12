@@ -15,14 +15,17 @@ from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormField
 
 from wagtailsettings import BaseSetting, register_setting
 
-from blog.models import ArticlePage
+from blog.models import ArticlePage, CaptionedImageBlock
 
 
 class HomePage(Page):
     parent_page_types = []
 
     body = RichTextField(blank=True)
-    featured_article = models.ForeignKey(ArticlePage, null=True, on_delete=models.SET_NULL)
+    featured_article = models.ForeignKey(
+        ArticlePage,
+        null=True, blank=True,
+        on_delete=models.SET_NULL)
 
     content_panels = Page.content_panels + [
         FieldPanel('body', classname="full"),
@@ -53,7 +56,7 @@ class InfoPage(Page):
 
     body = StreamField([
         ('text', blocks.RichTextBlock(icon='pilcrow')),
-        ('image', ImageChooserBlock(icon='image')),
+        ('image', CaptionedImageBlock()),
         ('embed', EmbedBlock(icon='media')),
     ])
 
@@ -94,6 +97,10 @@ class SocialMediaSettings(BaseSetting):
         blank=True,
         max_length=127,
         help_text='Twitter username')
+    google_plus = models.CharField(
+        blank=True,
+        max_length=127,
+        help_text='Google Plus page URL (excluding the +)')
     github = models.URLField(
         blank=True,
         help_text='Complete URL for Github page')
@@ -111,6 +118,11 @@ class GeneralSettings(BaseSetting):
         on_delete=models.SET_NULL,
         related_name='+',
         help_text='Icon for site in browsers (Must be .ico file to work)',
+    )
+    site_tagline = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text='Tagline to show after the site title'
     )
     site_description = models.TextField(
         blank=True,
@@ -135,6 +147,7 @@ class GeneralSettings(BaseSetting):
     panels = [
         FieldPanel('site_name'),
         ImageChooserPanel('favicon'),
+        FieldPanel('site_tagline'),
         FieldPanel('site_description'),
         FieldPanel('pagination_count'),
         FieldPanel('disqus'),

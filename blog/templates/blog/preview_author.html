@@ -1,12 +1,12 @@
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags make_markdown %}
 
 <div class="preview-article article table">
     {% image author.portrait fill-300x300 as tmp_photo %}
-    <div class="col img" style="background-image: url({{ tmp_photo.url }})"></div>
+    <div class="col img" style="background-image: url({{ tmp_photo.url }})" {{ tmp_photo.attrs }}></div>
     <div class="col">
         <div class="preview-info">
             <h3><a href="{{ author.url }}">{{ author.title }}</a></h3>
-            <p>{{ author.bio }}</p>
+            <p>{{ author.bio|make_markdown }}</p>
         </div>
         <p class="read-more-link"><a href="{{ author.url }}">
             Read More&ensp;<i class="fa fa-angle-right fa-lg"></i>

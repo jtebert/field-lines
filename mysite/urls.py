@@ -15,6 +15,12 @@ urlpatterns = [
     url(r'^documents/', include(wagtaildocs_urls)),
 
     url(r'^search/$', 'search.views.search', name='search'),
+    url(r'^network/$', 'search.views.articles_network', name='network'),
+    url(r'^explore/$', 'search.views.articles_filter', name='explore'),
+
+    url(r'^get-articles/$', 'search.views.get_articles', name='get_articles'),
+    url(r'^get-subject-network/$', 'search.views.get_subject_network', name='get_subject_network'),
+
     url(r'^feed/$', ArticleFeed(), name='feed'),
 
     url(r'', include(wagtail_urls)),

@@ -11,10 +11,20 @@
     <div class="article">
         {% if self.main_image %}
             {% image self.main_image fill-800x450 class="article-photo" %}
+
+            <p class="main-image-source">
+                {% if self.main_image.source_url and self.main_image.source_name %}
+                    <a href="{{ self.main_image.source_url }}">{{ self.main_image.source_name }}</a>
+                {% elif self.main_image.source_url %}
+                    <a href="{{ self.main_image.source_url }}">Source</a>
+                {% elif self.main_image.source_name %}
+                    {{ self.main_image.source_name }}
+                {% endif %}
+            </p>
         {% endif %}
 
         <div class="article-content">
-            <h4>{{ self.subject }}</h4>
+            <h4>{{ self.subjects.all|join:", " }}</h4>
             <h3>{{ self.title }}</h3>
             <h4 class="no-break">By {{ self.author }}&emsp;|&emsp;</h4><h5 class="no-break">{{ self.date }}</h5>
 
@@ -39,13 +49,14 @@
         <div class="table">
             {% if self.author.portrait %}
                 {% image self.author.portrait fill-350x350 as tmp_photo %}
-                <div class="col img" style="background-image: url({{ tmp_photo.url }})"></div>
+                <div class="col img" style="background-image: url({{ tmp_photo.url }})" {{ tmp_photo.attrs }}></div>
             {% endif %}
             <div class="col">
                 <div class="preview-info">
                     <h3><a href="{{ self.author.url }}">{{ self.author.title }}</a></h3>
-                    <p>{{ self.author.bio }}</p>
+                    <p>{{ self.author.bio|make_markdown }}</p>
                 </div>
+
                 <p class="read-more-link"><a href="{{ self.author.url }}">
                     Read More&ensp;<i class="fa fa-angle-right fa-lg"></i>
                 </a></p>
@@ -108,4 +119,21 @@
 </div>
 {% endif %}
 
+{% endblock %}
+
+
+{% block extra_js %}
+    <script type="text/javascript">
+        $('body').on('click.collapse-next.data-api', '[data-toggle=collapse-next]', function() {
+            var $target = $(this).parent().next();
+            if ($target.data('bs.collapse')) {
+                $target.collapse('toggle')
+            } else {
+                $target.collapse()
+            }
+        });
+        $(".extra-info-header").click(function(){
+            $($(this).children()[0]).toggleClass("down");
+        });
+    </script>
 {% endblock %}

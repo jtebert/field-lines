@@ -1,0 +1,175 @@
+{% extends "page.html" %}
+{% load static wagtailcore_tags wagtailsettings_tags %}
+
+{% block body_class %}template-searchresults{% endblock %}
+
+{% block title %}Search{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/gcse.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'node_modules/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css' %}">
+{% endblock %}
+
+{% block page-content %}
+    {% get_settings %}
+
+    <!-- Filtering AJAX test -->
+    <div class="col-md-4 no-gutter">
+        <div class="article">
+            <h3>Filter by Subject</h3>
+            <div class="article-content">
+                <form action="{% url 'search' %}" method="GET" id="search-form">
+                    {% csrf_token %}
+                    <div id='token-box'>
+                        <input readonly id="tokens-input" style="width: 0;">
+                    </div>
+                    <!--<input type="submit" value="Find" class="tiny button">-->
+                    <div id="tag-box">
+                        {% for s in subject_names %}
+                            <div class="tag"><a href="#">{{ s }}</a></div>
+                        {% endfor %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8" id="search-results"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        // This function gets cookie with a given name
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        var csrftoken = getCookie('csrftoken');
+
+        /*
+        The functions below will create a header with csrftoken
+        */
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        function sameOrigin(url) {
+            // test that a given url is a same-origin URL
+            // url could be relative or scheme relative or absolute
+            var host = document.location.host; // host + port
+            var protocol = document.location.protocol;
+            var sr_origin = '//' + host;
+            var origin = protocol + sr_origin;
+            // Allow absolute or scheme relative URLs to same origin
+            return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+                (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+                // or any other URL that isn't scheme relative or absolute i.e relative.
+                !(/^(\/\/|http:|https:).*/.test(url));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                    // Send the token to same-origin, relative URLs only.
+                    // Send the token only if the method warrants CSRF protection
+                    // Using the CSRFToken value acquired earlier
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        // Turn tag into search token when clicked
+        $(document).on('click', '.tag a', function(e) {
+            e.preventDefault();
+            tag_val = $(e.target).html();
+            $('#tokens-input').val(function(i, val) {
+                return val + (val ? ', ' : '') + tag_val;
+            });
+            // Add to tokens
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = '<div class="token">' + tag_val + '<a href="#"><i class="fa fa-close"></i></a></div>';
+            var newToken = wrapper.firstChild;
+            var tokenBox = document.getElementById('token-box');
+            tokenBox.appendChild(newToken);
+            // Remove tag
+            $(this).parent().remove();
+            get_articles()
+        });
+
+        // Move back from token to tags when X clicked, and sort alphabetically
+        $(document).on('click', '.token a', function(e) {
+            e.preventDefault();
+            var token = $(e.target).parent().parent();
+            // Add as tag
+            var tokenVal = token.text();
+            var wrapper = document.createElement('div');
+            wrapper.innerHTML = '<div class="tag"><a href="#">' + tokenVal + '</a></div>';
+            var newTag = wrapper.firstChild;
+            var tagBox = document.getElementById('tag-box');
+            // TODO: Sort tags alphabetically
+            var added = false;
+            $(".tag", tagBox).each(function(){
+                if ($(this).text() > $(newTag).text()) {
+                    $(newTag).insertBefore($(this)).fadeIn("fast");
+                    added = true;
+                    return false;
+                }
+            });
+            if(!added) $(newTag).appendTo($(tagBox)).fadeIn("fast");
+            //tagBox.appendChild(newTag);
+            // Remove from input field
+            $('#tokens-input').val(function(i, val) {
+                return  newVal = val.replace(tokenVal + ', ', '').replace(tokenVal, '').replace(/, $/, '');
+            });
+            if (!$('#tokens-input').val()) {
+                $('#search-results').html("Add subjects to find articles.")
+            } else {
+                get_articles();
+            }
+            // Remove token
+            $(e.target).parent().parent().remove();
+        });
+
+        // Submit post on submit
+        $('#search-form').submit(function(event){
+            event.preventDefault();
+            get_articles();
+        });
+
+        function get_articles() {
+            $.ajax({
+                url : "/get-articles/", // the endpoint
+                type : "GET", // http method
+                data : { search_text : $('#tokens-input').val() }, // data sent with the post request
+
+                // handle a successful response
+                success : function(data) {
+                    $('#token-inputs').val(''); // remove the value from the input
+                    //console.log(data); // log the returned json to the console
+                    console.log("success"); // another sanity check
+                    $('#search-results').html(data)
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+        }
+
+    </script>
+{% endblock %}

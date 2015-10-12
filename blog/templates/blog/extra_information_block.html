@@ -1,0 +1,10 @@
+{% load make_markdown %}
+
+<div class="extra-info">
+    <a href="#!"><h4 class='extra-info-header' data-toggle="collapse-next">
+        <i class="fa fa-chevron-right fa-fw rotate"></i>&ensp;{{ self.title }}
+    </h4></a>
+    <div class="collapse extra-info-body">
+        {{ self.text|make_markdown }}
+    </div>
+</div>
