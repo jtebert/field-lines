@@ -18,6 +18,7 @@ import os
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
+SITE_ID = 1
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -55,7 +56,20 @@ INSTALLED_APPS = [
 
     'blog',
     'wagtailsettings',
-    'images'
+    'images',
+
+    # django-wiki
+    'django.contrib.sites',  # django 1.6.2
+    'django.contrib.humanize',
+    'django_nyt',
+    'mptt',
+    'sekizai',
+    'sorl.thumbnail',
+    'wiki',
+    'wiki.plugins.attachments',
+    'wiki.plugins.notifications',
+    'wiki.plugins.images',
+    'wiki.plugins.macros',
 ]
 
 MIDDLEWARE_CLASSES = (
@@ -79,6 +93,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(PROJECT_DIR, 'templates'),
+            os.path.join(os.path.dirname(PROJECT_DIR), 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -87,6 +102,17 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                # django-wiki
+                "django.contrib.auth.context_processors.auth",
+                "django.core.context_processors.debug",
+                "django.core.context_processors.i18n",
+                "django.core.context_processors.media",
+                "django.core.context_processors.request",
+                "django.core.context_processors.static",
+                "django.core.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+                "sekizai.context_processors.sekizai",
             ],
         },
     },
@@ -95,6 +121,11 @@ TEMPLATES = [
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'wagtailsettings.context_processors.settings',
+)
+
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
 )
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
@@ -154,3 +185,7 @@ WAGTAIL_SITE_NAME = "mysite"
 WAGTAILIMAGES_IMAGE_MODEL = 'images.CustomImage'
 
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = True
+
+# Wiki settings
+
+WIKI_CHECK_SLUG_URL_AVAILABLE = False

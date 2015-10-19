@@ -1,0 +1,18 @@
+{% extends "wiki/base_site.html" %}
+
+{% load sekizai_tags %}
+
+{% block wiki_site_title %}: Reactor Wiki{% endblock %}
+
+{% block wiki_header_branding %}
+<a class="navbar-brand" href="/">The Reactor</a>
+{% endblock %}
+
+{% block wiki_header_navlinks %}
+<ul class="nav navbar-nav">
+    <li class="{% if urlpath.path == '' %}active{% endif %}"><a href="{% url 'wiki:root' %}">Wiki</a></li>
+    <li class="{% if urlpath.path == 'for_authors/' %}active{% endif %}"><a href="{% url 'wiki:get' path='for_authors/' %}">For Authors</a></li>
+    <li class="{% if urlpath.path == 'for_authors/' %}active{% endif %}"><a href="{% url 'wiki:get' path='for_authors/' %}">For Authors</a></li>
+</ul>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+{% endblock %}

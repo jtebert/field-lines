@@ -7,6 +7,9 @@ from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 from blog.feeds import ArticleFeed
 
+from wiki.urls import get_pattern as get_wiki_pattern
+from django_nyt.urls import get_pattern as get_nyt_pattern
+
 
 urlpatterns = [
     url(r'^django-admin/', include(admin.site.urls)),
@@ -14,14 +17,19 @@ urlpatterns = [
     url(r'^admin/', include(wagtailadmin_urls)),
     url(r'^documents/', include(wagtaildocs_urls)),
 
+    # Search/filter articles
     url(r'^search/$', 'search.views.search', name='search'),
     url(r'^network/$', 'search.views.articles_network', name='network'),
     url(r'^explore/$', 'search.views.articles_filter', name='explore'),
-
+    # JSON views (for search/filter articles)
     url(r'^get-articles/$', 'search.views.get_articles', name='get_articles'),
     url(r'^get-subject-network/$', 'search.views.get_subject_network', name='get_subject_network'),
 
     url(r'^feed/$', ArticleFeed(), name='feed'),
+
+    # Django wiki
+    url(r'^notifications/', get_nyt_pattern()),
+    url(r'^wiki/', get_wiki_pattern()),
 
     url(r'', include(wagtail_urls)),
 ]
