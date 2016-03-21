@@ -137,6 +137,7 @@ class ArticlePage(Page):
     search_fields = Page.search_fields + (
         index.SearchField('intro'),
         index.SearchField('body'),
+        index.SearchField('author')
     )
 
     content_panels = Page.content_panels + [

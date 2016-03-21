@@ -186,6 +186,15 @@ WAGTAILIMAGES_IMAGE_MODEL = 'images.CustomImage'
 
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = True
 
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.wagtailsearch.backends.elasticsearch',
+        'URLS': ['http://localhost:9200'],
+        'INDEX': 'wagtail',
+        'TIMEOUT': 5,
+    }
+}
+
 # Wiki settings
 
 WIKI_CHECK_SLUG_URL_AVAILABLE = False

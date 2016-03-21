@@ -34,8 +34,8 @@
                 {% for s, p in sp.items %}
                     <li><a href="{{ p }}">{{ s }}</a></li>
                 {% endfor %}
-                <li><a href="{% url 'explore' %}">Explore Articles</a></li>
-                <li><a href="{% url 'network' %}">See Network</a></li>
+                <li><a href="{% url 'explore' %}">Explore</a></li>
+                <li><a href="{% url 'network' %}">Connect</a></li>
                 <li><a href="{% url 'search' %}">Search</a></li>
                 <li><a href="{% slugurl 'about' %}">About</a></li>
             </ul>

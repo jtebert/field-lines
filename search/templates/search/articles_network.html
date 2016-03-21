@@ -9,13 +9,62 @@
 {% endblock %}
 
 {% block page-content %}
-<div class="col-md-6 no-gutter">
+<div class="col-md-12 no-gutter">
     <div id="mynetwork"></div>
 </div>
-<div class="col-md-6" id="search-results">
+
+<div class="col-md-8" id="search-results">
+    <div class="articles-container"></div>
+</div>
+<div class="col-md-4">
+
+    <div class="extra-info article-body">
+        <a href="#!"><h4 class='extra-info-header' data-toggle="collapse-next">
+            <i class="fa fa-chevron-right fa-fw rotate"></i>&ensp;View network as table
+        </h4></a>
+        <div class="collapse extra-info-body">
+            <table id="table-network">
+                <tbody>
+                    <tr>
+                        <th scope="col">Node</th>
+                        <th scope="col">Connections</th>
+                    </tr>
+                    {% for subject, links in subject_links.items %}
+                        <tr>
+                            <td><a href="#">{{ subject }}</a></td>
+                            <td>
+                                {% for s in links %}
+                                    <a href="#">{{ s }}</a><br/>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 
 <script type="text/javascript">
+    // Display network table
+    $('#table-network-link').click(function(e) {
+        e.preventDefault();
+        console.log('click');
+        $('#table-network').show();
+    });
+
+    // Get articles using table links
+    $('#table-network a').click(function(e) {
+        e.preventDefault();
+        var search_text = $(this).html();
+        if ($(this).parent().prev().length > 0) {
+            // 2nd element (link)
+            search_text = search_text + ', ' + $(this).parent().prev().find('>:first-child').html()
+        }
+        get_articles(search_text)
+    });
+
     // create a network
     var container = document.getElementById('mynetwork');
 
@@ -39,9 +88,9 @@
             font: {
                 size: 24,
                 face: 'Open Sans',
-                color: '#111'
+                color: '#E1E2E9'
             },
-            shape: 'box',
+            shape: 'dot',
             shapeProperties: {
                 borderRadius: 0
             },
@@ -58,19 +107,21 @@
             }
         },
         edges: {
+            smooth: false,
             color: {
                 color: '#3f67c0',
                 highlight: '#35b5eb'
             },
             selectionWidth: 4,
             scaling: {
-                min: 3,
+                min: 3
             }
         },
         physics: {
             barnesHut: {
                 gravitationalConstant: -2000,
-                springLength: 150
+                springLength: 150,
+                avoidOverlap: 0.15
             }
         }
     };
@@ -89,11 +140,14 @@
             data: [],
 
             success: function (data) {
+                // Populate network
                 networkData = {
                     nodes: new vis.DataSet(data.nodes),
                     edges: new vis.DataSet(data.edges)
                 };
-                network.setData(networkData)
+                network.setData(networkData);
+                // Populate table (for accessibility)
+
             },
             error: function (xhr, errmsg, err) {
                 console.log(xhr.status + ": " + xhr.responseText)
@@ -108,9 +162,9 @@
             data: {search_text : subjects},
 
             success : function(data) {
-                console.log('success');
+                //console.log('success');
                 //console.log(data)
-                $('#search-results').html(data)
+                $('.articles-container').html(data)
             },
             error: function (xhr, errmsg, err) {
                 console.log(xhr.status + ": " + xhr.responseText)
@@ -120,14 +174,14 @@
 
     // Get the corresponding articles when the node/edge is selected
     network.on('select', function(obj) {
-        console.log('selection changed');
+        //console.log('selection changed');
         if (obj.nodes.length == 0 && obj.edges.length == 0) {
-            console.log('everything unselected')
+            //console.log('everything unselected')
         } else if (obj.nodes.length == 0) {
-            console.log('edge selected')
+            //console.log('edge selected')
             get_articles(obj.edges[0]);
         } else {
-            console.log('node selected')
+            //console.log('node selected')
             get_articles(obj.nodes[0]);
         }
     });

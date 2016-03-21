@@ -1,29 +1,45 @@
 {% extends 'page.html' %}
 
-{% load wagtailimages_tags make_markdown %}
+{% load wagtailimages_tags wagtailcore_tags make_markdown %}
 
 {% block page-content %}
-    <div class="col-md-12 no-gutter">
-        <div class="preview-article article table">
-            {% image self.portrait fill-500x500 as tmp_photo %}
-            <div class="col img" style="background-image: url({{ tmp_photo.url }})" {{ tmp_photo.attrs }}></div>
+
+<div class="col-md-4">
+    <div class="info-box">
+        <h2 class="info-header">Author</h2>
+        <div class="table">
+            {% if self.portrait %}
+                {% image self.portrait fill-350x350 as tmp_photo %}
+                <div class="col img" style="background-image: url({{ tmp_photo.url }})" {{ tmp_photo.attrs }}></div>
+            {% endif %}
             <div class="col">
                 <div class="preview-info">
-                    <h3>{{ self.title }}</h3>
-                    {{ self.bio|make_markdown }}
+                    <h3><a href="{{ self.url }}">{{ self.title }}</a></h3>
+                    <p>{{ self.bio|make_markdown }}</p>
                 </div>
-            </div>
-            {% if self.personal_website %}
+
+                {% if self.personal_website %}
                 <p class="read-more-link"><a href="{{ self.personal_website }}">
                     Visit Website&ensp;<i class="fa fa-angle-right fa-lg"></i>
                 </a></p>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
     </div>
 
-    <div class="col-md-8 col-md-offset-4">
-        {% for article in self.author_articles.all %}
-            {% include 'blog/preview_article.html' %}
-        {% endfor %}
+    <div class="info-box">
+        <h2 class="info-header">Connect</h2>
+        <a class="info-link-box general-link" href="{{ self.personal_website }}"><i class="fa fa-fw fa-globe"></i>&emsp;Website</a>
+        <a class="info-link-box general-link" href="{% slugurl 'contact' %}"><i class="fa fa-fw fa-twitter"></i>&emsp;Twitter</a>
+        <a class="info-link-box general-link" href="{% url 'search' %}"><i class="fa fa-fw fa-search"></i>&emsp;Search Articles</a>
     </div>
+
+
+</div>
+
+<div class="col-md-8">
+    {% for article in self.author_articles.all %}
+        {% include 'blog/preview_article.html' %}
+    {% endfor %}
+</div>
 {% endblock %}

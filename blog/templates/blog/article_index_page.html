@@ -17,9 +17,11 @@
 
 <div class="col-md-8">
     {% if articles %}
+    <div class="articles-container">
         {% for article in articles %}
             {% include "blog/preview_article.html" %}
         {% endfor %}
+    </div>
 
     <div class="pagination">
         {% if articles and articles.paginator.num_pages > 1 %}

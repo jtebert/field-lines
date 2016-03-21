@@ -19,7 +19,7 @@ def search(request):
 
     # Search
     if search_query:
-        search_results = Page.objects.live().search(search_query)
+        search_results = ArticlePage.objects.live().search(search_query)
         query = Query.get(search_query)
 
         # Record hit
@@ -43,7 +43,23 @@ def search(request):
 
 
 def articles_network(request):
-    return render(request, 'search/articles_network.html')
+    subjects = SubjectSnippet.objects.all()
+    subject_links = {}
+    subjects_unused = subjects
+    for s in subjects:
+        articles_this_subject = ArticlePage.objects.filter(subjects__subject=s)
+        # Get edges
+        subjects_unused = subjects_unused.exclude(pk=s.pk)
+        s_links = []
+        for s2 in subjects.exclude(pk=s.pk):
+            article_count_subjs = articles_this_subject.filter(subjects__subject=s2).count()
+            if article_count_subjs > 0:
+                s_links.append(s2.subject_name)
+        subject_links[s.subject_name] = sorted(s_links)
+
+    return render(request, 'search/articles_network.html', {
+        'subject_links': subject_links
+    })
 
 
 def articles_filter(request):
@@ -62,7 +78,13 @@ def get_articles(request):
         for s in subjects:
             if SubjectSnippet.objects.filter(subject_name=s).exists():
                 articles = articles.filter(subjects__subject__subject_name=s)
-        html = render_to_string('search/preview_articles.html', {'articles': articles})
+        if len(articles) > 0:
+            print articles
+            articles.order_by('-date')
+            print articles.first().date
+            html = render_to_string('search/preview_articles.html', {'articles': articles})
+        else:
+            html = '<p>No articles found</p>'
         return HttpResponse(html)
     else:
         pass

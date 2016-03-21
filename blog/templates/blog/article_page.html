@@ -120,20 +120,3 @@
 {% endif %}
 
 {% endblock %}
-
-
-{% block extra_js %}
-    <script type="text/javascript">
-        $('body').on('click.collapse-next.data-api', '[data-toggle=collapse-next]', function() {
-            var $target = $(this).parent().next();
-            if ($target.data('bs.collapse')) {
-                $target.collapse('toggle')
-            } else {
-                $target.collapse()
-            }
-        });
-        $(".extra-info-header").click(function(){
-            $($(this).children()[0]).toggleClass("down");
-        });
-    </script>
-{% endblock %}

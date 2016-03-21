@@ -76,7 +76,7 @@
             <h2 class="info-header">Latest</h2>
             {% for article in self.latest_articles.all %}
                 <a class="info-link-box" href="{{ article.url }}">
-                    <h4>{{ article.subject }}</h4>
+                    <h4>{{ article.subjects.all|join:", " }}</h4>
                     <h3>{{ article.title }}</h3>
                 </a>
             {% endfor %}
