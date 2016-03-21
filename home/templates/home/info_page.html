@@ -1,4 +1,5 @@
 {% extends "page.html" %}
+{% load make_markdown %}
 
 {% block page-content %}
 
@@ -6,7 +7,15 @@
     <div class="article">
         <div class="article-content">
             <h3>{{ self.title }}</h3>
-            {{ self.body }}
+            <div class="article-body">
+                {% for block in self.body %}
+                    {% if block.block_type == 'text' %}
+                        {{ block|make_markdown }}
+                    {% else %}
+                        {{ block }}
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>

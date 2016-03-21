@@ -38,23 +38,25 @@
 
 
 <div class="col-md-8">
-    {% if search_results %}
-        {% for article in search_results %}
-            {% include 'blog/preview_article.html' %}
-        {% endfor %}
+    <div class="articles-container" id="search-results">
+        {% if search_results %}
+            {% for article in search_results %}
+                {% include 'blog/preview_article.html' %}
+            {% endfor %}
 
-        {% if search_results.has_previous %}
-            <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a>
-        {% endif %}
+            {% if search_results.has_previous %}
+                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a>
+            {% endif %}
 
-        {% if search_results.has_next %}
-            <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
+            {% if search_results.has_next %}
+                <a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
+            {% endif %}
+        {% elif search_query %}
+            No results found
+        {% else %}
+            Type to search
         {% endif %}
-    {% elif search_query %}
-        No results found
-    {% else %}
-        Type to search
-    {% endif %}
+    </div>
 </div>
 
 {% endblock %}

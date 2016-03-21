@@ -79,9 +79,7 @@ def get_articles(request):
             if SubjectSnippet.objects.filter(subject_name=s).exists():
                 articles = articles.filter(subjects__subject__subject_name=s)
         if len(articles) > 0:
-            print articles
             articles.order_by('-date')
-            print articles.first().date
             html = render_to_string('search/preview_articles.html', {'articles': articles})
         else:
             html = '<p>No articles found</p>'

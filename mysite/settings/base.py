@@ -42,10 +42,12 @@ INSTALLED_APPS = [
     'wagtail.wagtailadmin',
     'wagtail.wagtailcore',
     'wagtail.contrib.wagtailstyleguide',
+    'wagtail.contrib.settings',
 
     'modelcluster',
     'compressor',
     'taggit',
+    'overextends',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'blog',
-    'wagtailsettings',
+    #'wagtailsettings',
     'images',
 
     # django-wiki
@@ -113,15 +115,22 @@ TEMPLATES = [
                 "django.core.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "sekizai.context_processors.sekizai",
+
+                # Wagtail
+                "wagtail.contrib.settings.context_processors.settings"
             ],
+            #'loaders': [
+                #'django.template.loaders.filesystem.Loader',
+                #'django.template.loaders.app_directories.Loader',
+            #]
         },
     },
 ]
 
-TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
-    'django.core.context_processors.request',
-    'wagtailsettings.context_processors.settings',
-)
+#TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + [
+#    'django.core.context_processors.request',
+#    #'wagtailsettings.context_processors.settings',
+#]
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -180,7 +189,7 @@ MEDIA_URL = '/media/'
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "mysite"
+WAGTAIL_SITE_NAME = "Field Lines"
 
 WAGTAILIMAGES_IMAGE_MODEL = 'images.CustomImage'
 

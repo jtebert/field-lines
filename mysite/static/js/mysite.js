@@ -1,4 +1,9 @@
 function animate_articles() {
+    /**
+     * Animate article previews entering (esp. on ajax load)
+     * @type {*|jQuery}
+     */
+    // TODO: Make them also fade out instead of insta-disappear
     var articles = $(".articles-container").children();
     articles.each(function (i) {
         $(this).delay(i * 200).animate(
@@ -17,6 +22,7 @@ function animate_articles() {
 $(document).ready(animate_articles());
 
 $(".articles-container").bind("DOMSubtreeModified", function () {
+    // Animate when the articles change
     console.log('change');
     animate_articles();
 });

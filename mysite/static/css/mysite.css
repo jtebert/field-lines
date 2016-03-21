@@ -79,10 +79,6 @@ a:focus {
     color: #22284f;
 }
 
-#wagtail-userbar {
-    top: 200px;
-}
-
 .no-break {
     display: inline-block;
 }

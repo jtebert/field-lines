@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 from django.conf import settings
 from django.contrib import admin
+import search.views
 
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
@@ -18,12 +19,12 @@ urlpatterns = [
     url(r'^documents/', include(wagtaildocs_urls)),
 
     # Search/filter articles
-    url(r'^search/$', 'search.views.search', name='search'),
-    url(r'^network/$', 'search.views.articles_network', name='network'),
-    url(r'^explore/$', 'search.views.articles_filter', name='explore'),
+    url(r'^search/$', search.views.search, name='search'),
+    url(r'^network/$', search.views.articles_network, name='network'),
+    url(r'^explore/$', search.views.articles_filter, name='explore'),
     # JSON views (for search/filter articles)
-    url(r'^get-articles/$', 'search.views.get_articles', name='get_articles'),
-    url(r'^get-subject-network/$', 'search.views.get_subject_network', name='get_subject_network'),
+    url(r'^get-articles/$', search.views.get_articles, name='get_articles'),
+    url(r'^get-subject-network/$', search.views.get_subject_network, name='get_subject_network'),
 
     url(r'^feed/$', ArticleFeed(), name='feed'),
 

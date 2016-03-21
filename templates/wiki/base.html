@@ -1,11 +1,12 @@
 {% extends "wiki/base_site.html" %}
+{% get_settings %}
 
 {% load sekizai_tags %}
 
-{% block wiki_site_title %}: Reactor Wiki{% endblock %}
+{% block wiki_site_title %}: {{ settings.home.GeneralSettings.site_name }} Wiki{% endblock %}
 
 {% block wiki_header_branding %}
-<a class="navbar-brand" href="/">The Reactor</a>
+<a class="navbar-brand" href="/">{{ settings.home.GeneralSettings.site_name }}</a>
 {% endblock %}
 
 {% block wiki_header_navlinks %}

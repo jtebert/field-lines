@@ -13,7 +13,7 @@ from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailcore import blocks
 from wagtail.wagtailforms.models import AbstractEmailForm, AbstractFormField
 
-from wagtailsettings import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 
 from blog.models import ArticlePage, CaptionedImageBlock
 
@@ -55,7 +55,7 @@ class InfoPage(Page):
     subpage_types = []
 
     body = StreamField([
-        ('text', blocks.RichTextBlock(icon='pilcrow')),
+        ('text', blocks.TextBlock(icon='pilcrow', help_text='This text will be formatted with markdown.')),
         ('image', CaptionedImageBlock()),
         ('embed', EmbedBlock(icon='media')),
     ])
@@ -88,7 +88,7 @@ FormPage.content_panels = [
 ]
 
 
-@register_setting
+@register_setting(icon='icon-group')
 class SocialMediaSettings(BaseSetting):
     facebook = models.URLField(
         blank=True,
